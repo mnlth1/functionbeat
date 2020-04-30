@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Set-up IAM role for functionbeat lambda execution
+
+Resources:
+  FbLambdaRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: lambda.functionbeat.role
+      Path: /
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+        - PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Action:
+                - cloudformation:*
+                - iam:*
+                - lambda:*
+                - logs:*
+                - s3:*
+                - es:*
+                - ec2:*
+                Effect: Allow
+                Resource: "*"
+  

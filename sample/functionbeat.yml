@@ -1,0 +1,47 @@
+###################### Functionbeat Configuration #######################
+
+# This file is an example configuration file highlighting only the most common
+# options. The functionbeat.reference.yml file from the same directory contains all the
+# supported options with more comments. You can use it as a reference.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/functionbeat/index.html
+#
+
+#============================  Provider ===============================
+# Configure which S3 endpoint should we use.
+functionbeat.provider.aws.endpoint: "s3.amazonaws.com"
+functionbeat.provider.aws.deploy_bucket: "functionbeat-deploy"
+
+# Configure AWS Lambda function
+functionbeat.provider.aws.functions:
+  - name: fb-cloudwatch
+    enabled: true
+    type: cloudwatch_logs
+    description: "lambda function for cloudwatch logs"
+
+    role: arn:aws:iam::xxawsaccountidxx:role/lambda.functionbeat.role
+
+    virtual_private_cloud:
+      security_group_ids: 
+        - sg-xxxxxxxx
+      subnet_ids:
+        - subnet-xxxxxxxx
+        - subnet-xxxxxxxx
+    triggers:
+      - log_group_name: /aws/lambda/sample-lambda-events
+
+#==================== Elasticsearch template setting ==========================
+
+setup.template.name: "sample-functionbeat"
+setup.template.pattern: "sample-functionbeat-*"
+
+#================================ Outputs =====================================
+
+output.elasticsearch:
+  hosts: ["localhost:9200"]
+  protocol: http
+
+  index: "sample-functionbeat-%{+yyyy.MM.dd}"
+  
+logging.level: debug
